@@ -20,4 +20,4 @@ ln -s "$HOME/src/dotfiles/X11" "$HOME/.config"
 ######
 
 rm -rf "$HOME/.config/i3"
-ln -s "$HOME/dotfiles/i3" "$HOME/.config"
+ln -s "$HOME/src/dotfiles/i3" "$HOME/.config"
