@@ -67,3 +67,10 @@ ln -sf "$DOTFILES/tmux/tmux.conf" "$XDG_CONFIG_HOME/tmux/tmux.conf"
 "$XDG_CONFIG_HOME/tmux/plugins/tpm"
 
 ln -s "$DOTFILES/tmuxp" "$XDG_CONFIG_HOME"
+
+#############
+# redshifts #
+#############
+
+mkdir -p "$XDG_CONFIG_HOME/redshift"
+ln -sf "$DOTFILES/redshift/redshift.conf" "$XDG_CONFIG_HOME/redshift/redshift.conf"

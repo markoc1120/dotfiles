@@ -53,6 +53,9 @@ then
     pgrep i3 || exec startx "$XDG_CONFIG_HOME/X11/.xinitrc"
 fi
 
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ftmuxp
