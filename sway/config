@@ -1,0 +1,10 @@
+set $mod Mod4
+
+bindsym $mod+Return exec ghostty
+
+exec udiskie
+exec gammastep -m wayland
+
+# input * {
+#     xkb_options caps:ctrl_modifier
+# }
