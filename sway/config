@@ -1,10 +1,235 @@
+# Fonts
+font pango:Inconsolata Nerd Font 12
+
+# TODO: Change this to Tokyonight
+# ##### GTK Settings #####
+#
+# exec gsettings set org.gnome.desktop.interface gtk-theme 'Breeze-gtk'
+# exec gsettings set org.gnome.desktop.interface icon-theme 'Gruvbox_Dark'
+
+##### Variables #####
+
+# Using Windows key as mod key
 set $mod Mod4
 
-bindsym $mod+Return exec ghostty
+# Default apps
+set $term ghostty
+set $launcher rofi -show drun
+set $browser brave
 
-exec udiskie
-exec gammastep -m wayland
+# ###### Idle configuration #####
 
-# input * {
-#     xkb_options caps:ctrl_modifier
-# }
+# This will lock your screen after 300 seconds of inactivity, then turn off
+# your displays after another 300 seconds, and turn your screens back on when
+# resumed. It will also lock your screen before your computer goes to sleep.
+exec swayidle -w \
+        timeout 300 'bash ~/.config/sway/scripts/lock.sh' \
+        timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+        before-sleep 'bash ~/.config/sway/scripts/lock.sh'
+
+# # Prevent swayidle from locking screen if a browser is in fullscreen
+for_window [window_role="browser"] inhibit_idle fullscreen
+
+##### Display configuration #####
+
+# Set Wallpaper
+output * bg ~/.config/sway/wallpapers/bg_img.jpg fill
+
+##### Input configuration #####
+
+input type:touchpad {
+   dwt enabled
+   tap enabled
+   natural_scroll disabled
+   middle_emulation enabled
+}
+
+input type:keyboard {
+  repeat_delay 250
+  repeat_rate 45
+}
+
+##### Key bindings #####
+# Basics:
+    bindsym $mod+Return exec $term
+    bindsym $mod+CTRL+f exec $browser
+    bindsym $mod+Shift+q kill
+    bindsym $mod+Space exec $launcher
+
+    # Drag floating windows by holding down $mod and left mouse button.
+    # Resize them with right mouse button + $mod.
+    # Despite the name, also works for non-floating windows.
+    # Change normal to inverse to use left mouse button for resizing and right
+    # mouse button for dragging.
+    floating_modifier $mod normal
+
+    # Reload the configuration file
+    bindsym $mod+Shift+r reload
+
+    # Exit sway (logs you out of your Wayland session)
+    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+
+    # Clipboard
+    bindsym $mod+V exec cliphist list | rofi -dmenu | cliphist decode | wl-copy
+
+# Moving around:
+    # Move your focus around
+    bindsym $mod+h focus left
+    bindsym $mod+j focus down
+    bindsym $mod+k focus up
+    bindsym $mod+l focus right
+
+    # Alternatively, you can use the cursor keys:
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+
+    # Move focused window
+    bindsym $mod+Shift+h move left
+    bindsym $mod+Shift+j move down
+    bindsym $mod+Shift+k move up
+    bindsym $mod+Shift+l move right
+
+    # Move the focused window with the same, but add Shift
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+
+# Workspaces:
+    # Switch to workspace
+    bindsym $mod+1 workspace number 1
+    bindsym $mod+2 workspace number 2
+    bindsym $mod+3 workspace number 3
+    bindsym $mod+4 workspace number 4
+    bindsym $mod+5 workspace number 5
+    bindsym $mod+6 workspace number 6
+    bindsym $mod+7 workspace number 7
+    bindsym $mod+8 workspace number 8
+    bindsym $mod+9 workspace number 9
+    bindsym $mod+0 workspace number 10
+    # Move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace number 1
+    bindsym $mod+Shift+2 move container to workspace number 2
+    bindsym $mod+Shift+3 move container to workspace number 3
+    bindsym $mod+Shift+4 move container to workspace number 4
+    bindsym $mod+Shift+5 move container to workspace number 5
+    bindsym $mod+Shift+6 move container to workspace number 6
+    bindsym $mod+Shift+7 move container to workspace number 7
+    bindsym $mod+Shift+8 move container to workspace number 8
+    bindsym $mod+Shift+9 move container to workspace number 9
+    bindsym $mod+Shift+0 move container to workspace number 10
+
+# Layout stuff:
+    # split in horizontal orientation
+    bindsym $mod+CTRL+h split h
+
+    # split in vertical orientation
+    bindsym $mod+CTRL+v split v
+
+    # change container layout (stacked, tabbed, toggle split)
+    bindsym $mod+s layout stacking
+    bindsym $mod+w layout tabbed
+    bindsym $mod+e layout toggle split
+
+    # enter fullscreen mode for the focused container
+    bindsym $mod+f fullscreen toggle
+
+    # toggle tiling / floating
+    bindsym $mod+Shift+space floating toggle
+
+    # change focus between tiling / floating windows
+    bindsym $mod+CTRL+space focus mode_toggle
+
+    # focus the parent container
+    bindsym $mod+a focus parent
+
+    # focus the child container
+    #bindsym $mod+d focus child
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+        bindsym h resize shrink width 10 px or 10 ppt
+        bindsym j resize grow height 10 px or 10 ppt
+        bindsym k resize shrink height 10 px or 10 ppt
+        bindsym l resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape or $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# hovering mouse ain't activates panels
+focus_follows_mouse no
+
+# Power menu script  
+set $powermenu sh ~/.config/sway/scripts/powermenu.sh
+
+# Bind power menu to mod+BackSpace
+bindsym $mod+BackSpace exec $powermenu
+
+# Utilities:
+    # Special keys to adjust volume via PulseAudio
+    bindsym --locked XF86AudioMute exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
+    bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume \@DEFAULT_SINK@ -1%
+    bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume \@DEFAULT_SINK@ +1%
+    bindsym --locked XF86AudioMicMute exec pactl set-source-mute \@DEFAULT_SOURCE@ toggle
+    # Special keys to adjust brightness via brightnessctl
+    bindsym --locked XF86MonBrightnessDown exec brightnessctl set 1%-
+    bindsym --locked XF86MonBrightnessUp exec brightnessctl set 1%+
+     
+    bindsym $mod+Print exec grim ~/Pictures/$(date +'%s_grim.png')
+    bindsym $mod+Alt+Print exec grim -g "$(slurp)" ~/Pictures/$(date +'%s_grim.png')
+
+##### Window configuration #####
+for_window [class="^.*"] border pixel 2
+
+# TODO: fix this so brave works
+# # Assign programs to workspace
+# assign [app_id="com.mitchellh.ghostty"] workspace number 1
+# assign [class="Brave-browser"] workspace number 2
+
+# Border configuration
+gaps outer 10
+gaps inner 5
+set $active_border #c0caf5
+set $inactive_border #524f4a
+client.focused $active_border $active_border $active_border $active_border
+client.unfocused $inactive_border $inactive_border $inactive_border $inactive_border
+
+## System stuff
+  exec dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+  exec pipewire
+  exec autotiling -l 3
+  exec mako
+
+## Clipboard history
+  exec wl-paste --type text --watch cliphist store &
+  exec wl-paste --type image --watch cliphist store &
+
+  # Wipe the clipboard db when more then 200 entries are saved
+  exec bash -c 'if [ "$(cliphist list | wc -l)" -gt 200 ]; then cliphist wipe; fi'
+
+## User Programs
+# start initial programs
+  exec ghostty
+  # exec brave &
+  # exec bitwarden &
+  # exec thunderbird &
+  exec "sleep 1; waybar"
+  exec "sleep 2; keepassxc"
+
+##############################
+
+include /etc/sway/config.d/*

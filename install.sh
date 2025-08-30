@@ -21,12 +21,23 @@ ln -sf "$DOTFILES/ghostty/" "$XDG_CONFIG_HOME/"
 
 ln -sf "$DOTFILES/sway/" "$XDG_CONFIG_HOME/"
 
-######
-# i3 #
-######
+############
+# swaylock #
+############
 
-rm -rf "$XDG_CONFIG_HOME/i3"
-ln -s "$DOTFILES/i3" "$XDG_CONFIG_HOME"
+ln -sf "$DOTFILES/swaylock/" "$XDG_CONFIG_HOME/"
+
+##########
+# waybar #
+##########
+
+ln -sf "$DOTFILES/waybar/" "$XDG_CONFIG_HOME/"
+
+########
+# rofi #
+########
+
+ln -sf "$DOTFILES/rofi/" "$XDG_CONFIG_HOME/"
 
 #######
 # zsh #
@@ -48,12 +59,11 @@ ln -sf "$DOTFILES/zsh/scripts.sh" "$XDG_CONFIG_HOME/zsh"
 mkdir -p "$XDG_DATA_HOME"
 cp -rf "$DOTFILES/fonts" "$XDG_DATA_HOME"
 
-# #################
-# # Notifications #
-# #################
-#
-# mkdir -p "$XDG_CONFIG_HOME/dunst"
-# ln -sf "$DOTFILES/dunst/dunstrc" "$XDG_CONFIG_HOME/dunst/dunstrc"
+#################
+# Notifications #
+#################
+
+ln -sf "$DOTFILES/mako/" "$XDG_CONFIG_HOME/"
 
 #######
 # Git #
@@ -73,7 +83,7 @@ ln -sf "$DOTFILES/tmux/tmux.conf" "$XDG_CONFIG_HOME/tmux/tmux.conf"
 && git clone https://github.com/tmux-plugins/tpm \
 "$XDG_CONFIG_HOME/tmux/plugins/tpm"
 
-ln -s "$DOTFILES/tmuxp" "$XDG_CONFIG_HOME"
+ln -sf "$DOTFILES/tmuxp" "$XDG_CONFIG_HOME"
 
 #############
 # gammastep #
