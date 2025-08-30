@@ -8,19 +8,36 @@
 # sudo pacman -S --noconfirm --needed gcc make git ripgrep fd unzip neovim
 ln -sf "$DOTFILES/nvim/" "$XDG_CONFIG_HOME/"
 
-#######
-# X11 #
-#######
+###########
+# ghostty #
+###########
 
-rm -rf "$XDG_CONFIG_HOME/X11"
-ln -s "$DOTFILES/X11" "$XDG_CONFIG_HOME"
+rm -rf "$XDG_CONFIG_HOME/ghostty"
+ln -sf "$DOTFILES/ghostty/" "$XDG_CONFIG_HOME/"
 
-######
-# i3 #
-######
+########
+# sway #
+########
 
-rm -rf "$XDG_CONFIG_HOME/i3"
-ln -s "$DOTFILES/i3" "$XDG_CONFIG_HOME"
+ln -sf "$DOTFILES/sway/" "$XDG_CONFIG_HOME/"
+
+############
+# swaylock #
+############
+
+ln -sf "$DOTFILES/swaylock/" "$XDG_CONFIG_HOME/"
+
+##########
+# waybar #
+##########
+
+ln -sf "$DOTFILES/waybar/" "$XDG_CONFIG_HOME/"
+
+########
+# rofi #
+########
+
+ln -sf "$DOTFILES/rofi/" "$XDG_CONFIG_HOME/"
 
 #######
 # zsh #
@@ -29,6 +46,7 @@ ln -s "$DOTFILES/i3" "$XDG_CONFIG_HOME"
 mkdir -p "$XDG_CONFIG_HOME/zsh"
 ln -sf "$DOTFILES/zsh/.zshenv" "$HOME"
 ln -sf "$DOTFILES/zsh/.zshrc" "$XDG_CONFIG_HOME/zsh"
+ln -sf "$DOTFILES/zsh/.zprofile" "$XDG_CONFIG_HOME/zsh/.zprofile"
 ln -sf "$DOTFILES/zsh/aliases" "$XDG_CONFIG_HOME/zsh/aliases"
 rm -rf "$XDG_CONFIG_HOME/zsh/external"
 ln -sf "$DOTFILES/zsh/external" "$XDG_CONFIG_HOME/zsh"
@@ -45,8 +63,7 @@ cp -rf "$DOTFILES/fonts" "$XDG_DATA_HOME"
 # Notifications #
 #################
 
-mkdir -p "$XDG_CONFIG_HOME/dunst"
-ln -sf "$DOTFILES/dunst/dunstrc" "$XDG_CONFIG_HOME/dunst/dunstrc"
+ln -sf "$DOTFILES/mako/" "$XDG_CONFIG_HOME/"
 
 #######
 # Git #
@@ -66,11 +83,11 @@ ln -sf "$DOTFILES/tmux/tmux.conf" "$XDG_CONFIG_HOME/tmux/tmux.conf"
 && git clone https://github.com/tmux-plugins/tpm \
 "$XDG_CONFIG_HOME/tmux/plugins/tpm"
 
-ln -s "$DOTFILES/tmuxp" "$XDG_CONFIG_HOME"
+ln -sf "$DOTFILES/tmuxp" "$XDG_CONFIG_HOME"
 
 #############
-# redshifts #
+# gammastep #
 #############
 
-mkdir -p "$XDG_CONFIG_HOME/redshift"
-ln -sf "$DOTFILES/redshift/redshift.conf" "$XDG_CONFIG_HOME/redshift/redshift.conf"
+mkdir -p "$XDG_CONFIG_HOME/gammastep"
+ln -sf "$DOTFILES/gammastep/config" "$XDG_CONFIG_HOME/gammastep/config"
