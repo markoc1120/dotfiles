@@ -172,6 +172,8 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
+vim.g.python3_host_prog = vim.fn.expand '~/.config/nvim/.venv/bin/python3'
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -738,6 +740,22 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      require('lspconfig')['pyright'].setup {
+
+        -- on_attach = on_attach,
+        capabilities = vim.lsp.protocol.make_client_capabilities(),
+        settings = {
+          python = {
+            analysis = {
+              diagnosticSeverityOverrides = {
+                reportUnusedExpression = 'none', -- this removes a really annoying warning in notebook type files
+              },
+              -- diagnosticMode = "openFilesOnly",
+            },
+          },
+        },
+      }
+
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
@@ -754,7 +772,205 @@ require('lazy').setup({
       }
     end,
   },
+  {
+    'GCBallesteros/jupytext.nvim',
+    -- ft = { 'ipynb' },
+    lazy = false,
+    opts = {
+      style = 'markdown',
+      output_extension = 'md',
+      force_ft = 'markdown',
+    },
+  },
+  { 'jmbuhr/otter.nvim', ft = { 'markdown', 'quarto', 'norg' } },
+  {
+    'quarto-dev/quarto-nvim',
+    dependencies = {
+      'nvim-lspconfig',
+      'jmbuhr/otter.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    ft = { 'quarto', 'markdown', 'norg' },
+    config = function()
+      local quarto = require 'quarto'
+      quarto.setup {
+        lspFeatures = {
+          enabled = true,
+          languages = { 'python', 'rust', 'lua' },
+          chunks = 'all', -- 'curly' or 'all'
+          diagnostics = {
+            enabled = true,
+            triggers = { 'BufWritePost' },
+          },
+          completion = {
+            enabled = true,
+          },
+        },
+        keymap = {
+          hover = 'H',
+          definition = 'gd',
+          rename = '<localleader>rn',
+          references = 'gr',
+          format = '<localleader>gf',
+        },
+        codeRunner = {
+          -- enabled = true,
+          ft_runners = {
+            bash = 'slime',
+          },
+          default_method = 'molten',
+        },
+      }
 
+      vim.keymap.set('n', '<localleader>qp', quarto.quartoPreview, { desc = 'Preview the Quarto document', silent = true, noremap = true })
+      -- to create a cell in insert mode, I have the ` snippet
+      vim.keymap.set('n', '<localleader>cc', 'i`<c-j>', { desc = 'Create a new code cell', silent = true })
+      vim.keymap.set('n', '<localleader>cs', 'i```\r\r```{}<left>', { desc = 'Split code cell', silent = true, noremap = true })
+
+      -- for more keybinds that I would use in a quarto document, see the configuration for molten
+      -- require 'bhydra.nvimenlubas.hydra.notebook'
+    end,
+  },
+  {
+    'benlubas/molten-nvim',
+    version = '^1.0.0', -- use version <2.0.0 to avoid breaking changes
+    dependencies = { '3rd/image.nvim' },
+    build = ':UpdateRemotePlugins',
+    init = function()
+      vim.g.molten_open_cmd = 'brave'
+      vim.g.molten_output_win_max_height = 30
+      -- I find auto open annoying, keep in mind setting this option will require setting
+      -- a keybind for `:noautocmd MoltenEnterOutput` to open the output again
+      vim.g.molten_auto_open_output = false
+
+      -- this guide will be using image.nvim
+      -- Don't forget to setup and install the plugin if you want to view image outputs
+      vim.g.molten_image_provider = 'image.nvim'
+
+      -- optional, I like wrapping. works for virt text and the output window
+      -- vim.g.molten_wrap_output = true
+
+      -- Output as virtual text. Allows outputs to always be shown, works with images, but can
+      -- be buggy with longer images
+      vim.g.molten_virt_text_output = true
+
+      -- this will make it so the output shows up below the \`\`\` cell delimiter
+      vim.g.molten_virt_lines_off_by_1 = false
+      vim.g.molten_enter_output_behavior = 'open_and_enter'
+
+      -- if you work with html outputs:
+      vim.keymap.set('n', '<localleader>mx', ':MoltenOpenInBrowser<CR>', { desc = 'open output in browser', silent = true })
+
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'MoltenInitPost',
+        callback = function()
+          -- quarto code runner mappings
+          local r = require 'quarto.runner'
+          vim.keymap.set('n', '<localleader>rc', r.run_cell, { desc = 'run cell', silent = true })
+          vim.keymap.set('n', '<localleader>ra', r.run_above, { desc = 'run cell and above', silent = true })
+          vim.keymap.set('n', '<localleader>rb', r.run_below, { desc = 'run cell and below', silent = true })
+          vim.keymap.set('n', '<localleader>rl', r.run_line, { desc = 'run line', silent = true })
+          vim.keymap.set('n', '<localleader>rA', r.run_all, { desc = 'run all cells', silent = true })
+          vim.keymap.set('n', '<localleader>RA', function()
+            r.run_all(true)
+          end, { desc = 'run all cells of all languages', silent = true })
+
+          -- setup some molten specific keybindings
+          vim.keymap.set('n', '<localleader>e', ':MoltenEvaluateOperator<CR>', { desc = 'evaluate operator', silent = true })
+          vim.keymap.set('n', '<localleader>rr', ':MoltenReevaluateCell<CR>', { desc = 're-eval cell', silent = true })
+          vim.keymap.set('v', '<localleader>r', ':<C-u>MoltenEvaluateVisual<CR>gv', { desc = 'execute visual selection', silent = true })
+          vim.keymap.set('n', '<localleader>os', ':noautocmd MoltenEnterOutput<CR>', { desc = 'open output window', silent = true })
+          vim.keymap.set('n', '<localleader>oh', ':MoltenHideOutput<CR>', { desc = 'close output window', silent = true })
+          vim.keymap.set('n', '<localleader>md', ':MoltenDelete<CR>', { desc = 'delete Molten cell', silent = true })
+          local open = false
+          vim.keymap.set('n', '<localleader>ot', function()
+            open = not open
+            vim.fn.MoltenUpdateOption('auto_open_output', open)
+          end)
+
+          -- if we're in a python file, change the configuration a little
+          if vim.bo.filetype == 'python' then
+            vim.fn.MoltenUpdateOption('molten_virt_lines_off_by_1', false)
+            vim.fn.MoltenUpdateOption('molten_virt_text_output', false)
+          end
+        end,
+      })
+
+      vim.keymap.set('n', '<localleader>ip', function()
+        -- Try to read pyproject.toml in cwd
+        local pyproject = vim.fn.getcwd() .. '/pyproject.toml'
+        local project_name = nil
+
+        if vim.fn.filereadable(pyproject) == 1 then
+          for line in io.lines(pyproject) do
+            -- match lines like: name = "my_project"
+            local name = line:match '^%s*name%s*=%s*["\'](.+)["\']'
+            if name then
+              project_name = name
+              break
+            end
+          end
+        end
+
+        if project_name ~= nil then
+          vim.cmd(('MoltenInit %s'):format(project_name))
+        else
+          vim.cmd 'MoltenInit python3'
+        end
+      end, { desc = 'Initialize Molten for project specific kernel', silent = true })
+    end,
+  },
+  {
+    '3rd/image.nvim',
+    build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
+    -- version = '1.1.0',
+    opts = {
+      processor = 'magick_cli',
+    },
+    config = function()
+      require('image').setup {
+        backend = 'kitty',
+        processor = 'magick_cli', -- or "magick_rock"
+        -- integrations = {
+        --   markdown = {
+        --     enabled = true,
+        --     clear_in_insert_mode = false,
+        --     download_remote_images = true,
+        --     only_render_image_at_cursor = false,
+        --     only_render_image_at_cursor_mode = 'popup', -- or "inline"
+        --     floating_windows = false, -- if true, images will be rendered in floating markdown windows
+        --     filetypes = { 'markdown', 'vimwiki' }, -- markdown extensions (ie. quarto) can go here
+        --   },
+        --   neorg = {
+        --     enabled = true,
+        --     filetypes = { 'norg' },
+        --   },
+        --   typst = {
+        --     enabled = true,
+        --     filetypes = { 'typst' },
+        --   },
+        --   html = {
+        --     enabled = false,
+        --   },
+        --   css = {
+        --     enabled = false,
+        --   },
+        -- },
+        integrations = {},
+        max_width = 100,
+        max_height = 18,
+        max_width_window_percentage = math.huge,
+        max_height_window_percentage = math.huge,
+        -- scale_factor = 1.0,
+        window_overlap_clear_enabled = true, -- toggles images when windows are overlapped
+        window_overlap_clear_ft_ignore = { 'cmp_menu', 'cmp_docs', '' },
+        -- window_overlap_clear_ft_ignore = { 'cmp_menu', 'cmp_docs', 'snacks_notif', 'scrollview', 'scrollview_sign' },
+        -- editor_only_render_when_focused = false, -- auto show/hide images when the editor gains/looses focus
+        -- tmux_show_only_in_active_window = false, -- auto show/hide images in the correct Tmux window (needs visual-activity off)
+        -- hijack_file_patterns = { '*.png', '*.jpg', '*.jpeg', '*.gif', '*.webp', '*.avif' }, -- render image files as images when opened
+      }
+    end,
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },

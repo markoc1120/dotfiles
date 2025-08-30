@@ -1,6 +1,19 @@
 # Fonts
 font pango:Inconsolata Nerd Font 12
 
+## System stuff
+  exec dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+  exec pipewire
+  exec autotiling -l 3
+  exec mako
+
+## Clipboard history
+  exec wl-paste --type text --watch cliphist store &
+  exec wl-paste --type image --watch cliphist store &
+
+  # Wipe the clipboard db when more then 200 entries are saved
+  exec bash -c 'if [ "$(cliphist list | wc -l)" -gt 200 ]; then cliphist wipe; fi'
+
 # TODO: Change this to Tokyonight
 # ##### GTK Settings #####
 #
@@ -195,10 +208,11 @@ bindsym $mod+BackSpace exec $powermenu
 ##### Window configuration #####
 for_window [class="^.*"] border pixel 2
 
-# TODO: fix this so brave works
-# # Assign programs to workspace
-# assign [app_id="com.mitchellh.ghostty"] workspace number 1
-# assign [class="Brave-browser"] workspace number 2
+# Assign programs to workspace
+assign [app_id="com.mitchellh.ghostty"] workspace number 1
+assign [class="Brave-browser"] workspace number 2
+# for_window [app_id="Brave-browser"]               move to workspace number 2
+
 
 # Border configuration
 gaps outer 10
@@ -208,23 +222,9 @@ set $inactive_border #524f4a
 client.focused $active_border $active_border $active_border $active_border
 client.unfocused $inactive_border $inactive_border $inactive_border $inactive_border
 
-## System stuff
-  exec dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-  exec pipewire
-  exec autotiling -l 3
-  exec mako
-
-## Clipboard history
-  exec wl-paste --type text --watch cliphist store &
-  exec wl-paste --type image --watch cliphist store &
-
-  # Wipe the clipboard db when more then 200 entries are saved
-  exec bash -c 'if [ "$(cliphist list | wc -l)" -gt 200 ]; then cliphist wipe; fi'
-
 ## User Programs
 # start initial programs
   exec ghostty
-  # exec brave &
   # exec bitwarden &
   # exec thunderbird &
   exec "sleep 1; waybar"

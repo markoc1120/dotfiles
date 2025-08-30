@@ -59,3 +59,5 @@ export PATH=$PATH:$GOPATH/bin
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ftmuxp
+
+. "$HOME/.config/local/share/../bin/env"

@@ -42,6 +42,7 @@ tooltip {
     margin: 6px 6px 6px 0px;
     padding: 6px 10px;
     border-radius: 8px;
+    border: 2px solid #3b4261;
     background-color: @bg-alt;
     color: @fg;
 }
@@ -49,8 +50,9 @@ tooltip {
 #workspaces {
     background-color: @bg-alt;
     border-radius: 8px;
+    border: 2px solid #3b4261;
     margin: 6px 0px 6px 6px;
-    padding: 0 4px;
+    padding: 0;
 }
 
 #workspaces button {
