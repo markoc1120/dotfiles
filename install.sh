@@ -83,7 +83,9 @@ ln -sf "$DOTFILES/tmux/tmux.conf" "$XDG_CONFIG_HOME/tmux/tmux.conf"
 && git clone https://github.com/tmux-plugins/tpm \
 "$XDG_CONFIG_HOME/tmux/plugins/tpm"
 
-ln -sf "$DOTFILES/tmuxp" "$XDG_CONFIG_HOME"
+mkdir -p "$XDG_CONFIG_HOME/tmuxp"
+ln -sf "$DOTFILES/tmuxp"/* "$XDG_CONFIG_HOME/tmuxp/"
+ln -sf "$DOTFILES/tmuxp_local"/* "$XDG_CONFIG_HOME/tmuxp/"
 
 #############
 # gammastep #
