@@ -6,6 +6,7 @@ font pango:Inconsolata Nerd Font 12
   exec pipewire
   exec autotiling -l 3
   exec mako
+  exec wlsunset -l 56 -L 10 -t 2500 -T 6500
 
 ## Clipboard history
   exec wl-paste --type text --watch cliphist store &
