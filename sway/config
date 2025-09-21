@@ -213,6 +213,7 @@ for_window [class="^.*"] border pixel 2
 assign [app_id="com.mitchellh.ghostty"] workspace number 1
 assign [class="Brave-browser"] workspace number 2
 # for_window [app_id="Brave-browser"]               move to workspace number 2
+assign [class="discord-canary"] workspace number 3
 
 
 # Border configuration
@@ -226,6 +227,7 @@ client.unfocused $inactive_border $inactive_border $inactive_border $inactive_bo
 ## User Programs
 # start initial programs
   exec ghostty
+  exec discord-canary &
   # exec bitwarden &
   # exec thunderbird &
   exec "sleep 1; waybar"
